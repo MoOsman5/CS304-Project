@@ -3,7 +3,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 
 public class MainEventListener implements GLEventListener {
-    
+
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
@@ -38,6 +38,5 @@ public class MainEventListener implements GLEventListener {
     public void displayChanged(GLAutoDrawable glAutoDrawable, boolean modeChanged, boolean deviceChanged) {
         // Handle display changes if needed
     }
-    
-}
 
+}
