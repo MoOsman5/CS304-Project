@@ -24,9 +24,11 @@ public class MainEventListener implements GLEventListener, KeyListener {
     int Speed = 100; 
     int BasketX = 50;  
     int BasketY = 15;
-    int basketWidth = 10; 
+    int basketWidth = 10;
+     int health = 3;  
+    int heartIndex = 7; 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png", "Background2.png"};
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -66,6 +68,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       
         gl.glLoadIdentity(); 
         DrawBackground(gl);
+        if(health>0){
          handleKeyPress();
         if(Eggs.isEmpty()){
       addEgg();
@@ -96,6 +99,12 @@ public class MainEventListener implements GLEventListener, KeyListener {
                     Speed-=5;
                    Remove.add(egg);
                 }
+                if (egg.y < 0) {
+                health--; 
+                Eggs.remove(i);
+                i--; 
+            }
+                
         }
         
         Eggs.removeAll(Remove);
@@ -110,8 +119,22 @@ public class MainEventListener implements GLEventListener, KeyListener {
   
      
         DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
+         DrawHealth(gl);}else {
+        
+         DrawGameOver(gl);
+        }
     }
-
+    
+    
+    public void DrawHealth(GL gl) {
+        for (int i = 0; i < health; i++) {
+            DrawSprite(gl, 5 + i * 10, 90, heartIndex, 1, 0); 
+        }
+    }
+public void DrawGameOver(GL gl) {
+    int gameOverIndex = 8; 
+    DrawSprite(gl, 40, 50, gameOverIndex, 5, 0); 
+}
     public double sqrdDistance(int x, int y, int x1, int y1) {
         return Math.pow(x - x1, 2) + Math.pow(y - y1, 2);
     }
