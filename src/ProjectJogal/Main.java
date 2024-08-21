@@ -22,7 +22,7 @@ public class Main extends JFrame {
         gLCanvas.addGLEventListener(listener);
         gLCanvas.addKeyListener(listener);
         getContentPane().add(gLCanvas, BorderLayout.CENTER);
-        animator = new FPSAnimator(gLCanvas, 20);
+        animator = new FPSAnimator(gLCanvas, 10);
         animator.add(gLCanvas);
 
         animator.start();
