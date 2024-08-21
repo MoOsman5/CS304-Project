@@ -94,11 +94,7 @@ public class MainEventListener implements GLEventListener,KeyListener {
         DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
         egg.y--;
         
-        if (egg.y <= BasketY + basketWidth-7 && egg.y >= BasketY && 
-                egg.x >= BasketX && egg.x <= BasketX + basketWidth-7) {
-                Eggs.remove(i);
-                i--; 
-            } else if (egg.y < 0) {
+         if (egg.y < 0) {
                 
                 health--; 
                 Eggs.remove(i);
