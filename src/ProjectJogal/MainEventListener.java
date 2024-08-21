@@ -95,12 +95,21 @@ public class MainEventListener implements GLEventListener,KeyListener {
           if (Math.random() < count) {
             addEgg();
         }
+          
 
           
          //basket
            DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
-          
+    
+            DrawHealth(gl);
+
+           
    }
+    public void DrawHealth(GL gl) {
+        for (int i = 0; i < 3; i++) {
+            DrawSprite(gl, 5 + i * 10, 90, 7, 1, 0); // رسم القلوب في أعلى الشاشة
+        }
+    } 
 public double sqrdDistance(int x, int y, int x1, int y1){
         return Math.pow(x-x1,2)+Math.pow(y-y1,2);
     }
