@@ -69,7 +69,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
         }
         
             try {
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + assetsFolderName + "/gg.wav"));
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/gg.wav"));
         backgroundMusic = AudioSystem.getClip();
         backgroundMusic.open(audioStream);
         backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); 
@@ -162,7 +162,7 @@ public void DrawGameOver(GL gl) {
     }
     if (gameOverMusic == null) {
         try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + assetsFolderName + "/start.wav"));
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/start.wav"));
             gameOverMusic = AudioSystem.getClip();
             gameOverMusic.open(audioStream);
             gameOverMusic.start(); 
