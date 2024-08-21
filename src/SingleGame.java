@@ -21,7 +21,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class AlphabetGame extends JFrame implements GLEventListener, KeyListener {
+public class SingleGame extends JFrame implements GLEventListener, KeyListener {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final int FPS = 60;
@@ -60,13 +60,13 @@ public class AlphabetGame extends JFrame implements GLEventListener, KeyListener
         SwingUtilities.invokeLater(() -> {
             // Create the game and canvas
             canvas = new GLCanvas();
-            AlphabetGame game = new AlphabetGame();
+            SingleGame game = new SingleGame();
             canvas.addGLEventListener(game);
             canvas.addKeyListener(game);
             canvas.setFocusable(true);
 
             // Create the frame
-            JFrame frame = new JFrame("Alphabet Game");
+            JFrame frame = new JFrame("Chiken Game");
             frame.setLayout(new BorderLayout());
             frame.setSize(WIDTH, HEIGHT);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
