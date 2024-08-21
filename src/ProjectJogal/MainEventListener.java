@@ -229,13 +229,13 @@ public void DrawGameOver(GL gl) {
    public void handleKeyPress() {
 
         if (isKeyPressed(KeyEvent.VK_LEFT)) {
-             BasketX -= 1;
+             BasketX -= 2;
             if (BasketX < 0) {
                 BasketX = 0; 
             }
         }
         if (isKeyPressed(KeyEvent.VK_RIGHT)) {
-             BasketX += 1;
+             BasketX += 2;
             if (BasketX > maxWidth - basketWidth) {
                 BasketX = maxWidth - basketWidth; 
             }
