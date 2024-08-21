@@ -157,9 +157,7 @@ public void DrawGameOver(GL gl) {
     DrawSprite(gl, 40, 50, gameOverIndex, 5, 0);
     
     // تشغيل أغنية Game Over
-    if (backgroundMusic != null && backgroundMusic.isRunning()) {
-        backgroundMusic.stop();
-    }
+    stopBackgroundMusic();
     if (gameOverMusic == null) {
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/start.wav"));
