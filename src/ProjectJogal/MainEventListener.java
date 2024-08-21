@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -66,7 +67,7 @@ public class MainEventListener implements GLEventListener,KeyListener {
              gl.glClear(GL.GL_COLOR_BUFFER_BIT);       
             gl.glLoadIdentity(); 
             DrawBackground(gl);
-       
+       handleKeyPress();
        //chicken
        RepeatCounter++;
         if (RepeatCounter >= 5) {
@@ -194,30 +195,43 @@ public void DrawTreebranch(GL gl,int x, int y, int index, double scale, double a
     public void displayChanged(GLAutoDrawable glAutoDrawable, boolean modeChanged, boolean deviceChanged) {
         // Handle display changes if needed
     }
+public void handleKeyPress() {
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT) {
-            BasketX -= 1;
+        if (isKeyPressed(KeyEvent.VK_LEFT)) {
+             BasketX -= 1;
             if (BasketX < 0) {
                 BasketX = 0; 
             }
-        } else if (key == KeyEvent.VK_RIGHT) {
-            BasketX += 1;
+        }
+        if (isKeyPressed(KeyEvent.VK_RIGHT)) {
+             BasketX += 1;
             if (BasketX > maxWidth - basketWidth) {
                 BasketX = maxWidth - basketWidth; 
             }
-        }    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+        
     }
 
+    public BitSet keyBits = new BitSet(256);
+ 
+    @Override 
+    public void keyPressed(final KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        keyBits.set(keyCode);
+    } 
+ 
+    @Override 
+    public void keyReleased(final KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        keyBits.clear(keyCode);
+    } 
+ 
+    @Override 
+    public void keyTyped(final KeyEvent event) {
+        // don't care 
+    } 
+ 
+    public boolean isKeyPressed(final int keyCode) {
+        return keyBits.get(keyCode);
+    }
 }
