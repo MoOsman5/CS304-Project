@@ -4,6 +4,8 @@ import Texture.TextureReader;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -12,11 +14,12 @@ import javax.media.opengl.glu.GLU;
 public class MainEventListener implements GLEventListener,KeyListener {
     int chickenIndex = 0;  
     int RepeatCounter = 0;
+   int NumberChicken=5;
     int maxWidth = 100;
     int maxHeight = 100;
     int[] x = {5,25,45, 65,85};
     int[] y = {70, 69, 69,70,70};
-  
+  double count=0.5;
     int BasketX = 50;  
     int BasketY = 15;
     int basketWidth = 10; 
@@ -25,7 +28,7 @@ public class MainEventListener implements GLEventListener,KeyListener {
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2 ;
-    
+     private List<Egg> Eggs = new ArrayList<>();
     
     public void init(GLAutoDrawable glAutoDrawable) {
          GL gl = glAutoDrawable.getGL();
@@ -73,14 +76,26 @@ public class MainEventListener implements GLEventListener,KeyListener {
           
         }
          //chicken
-         for (int i = 0; i < 5; i++) {
+         for (int i = 0; i < NumberChicken; i++) {
             DrawSprite(gl, x[i], y[i],chickenIndex , 2, 0);   
         }
+         
           //Treebranch
     DrawTreebranch(gl,0, 61, 3, 1.0, 0);
+    
+    
+    // Eggs
+ for(int i=0; i<Eggs.size();i++){
+        Egg egg = Eggs.get(i);
+        DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
+        egg.y--;
+    }
 
-         
-         
+          if (Math.random() < count) {
+            addEgg();
+        }
+
+          
          //basket
            DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
           
@@ -88,13 +103,23 @@ public class MainEventListener implements GLEventListener,KeyListener {
 public double sqrdDistance(int x, int y, int x1, int y1){
         return Math.pow(x-x1,2)+Math.pow(y-y1,2);
     }
+
+ public void addEgg() {
+        int characterIndex = (int) (Math.random() *NumberChicken );
+        int alphabetX = x[characterIndex];
+        int alphabetY = y[characterIndex];
+        int index = (int) (Math.random()*3 )+4;
+        Eggs.add(new Egg(alphabetX, alphabetY, index));
+    }
+
+
 public void DrawTreebranch(GL gl,int x, int y, int index, double scale, double angle) {
     gl.glEnable(GL.GL_BLEND);
     gl.glBindTexture(GL.GL_TEXTURE_2D, textures[index]);
 
     gl.glPushMatrix();
     gl.glTranslated(x / (maxWidth / 2.0) - 0.9, y / (maxHeight / 2.0) - 0.9, 0);
-    gl.glScaled(2.0 * scale, 0.1 * scale, 1); // Scaled 2.0 to cover full width
+    gl.glScaled(2.0 * scale, 0.1 * scale, 1);
     gl.glRotated(angle, 0, 0, 1);
 
     gl.glBegin(GL.GL_QUADS);
@@ -179,12 +204,12 @@ public void DrawTreebranch(GL gl,int x, int y, int index, double scale, double a
     public void keyPressed(KeyEvent e) {
 int key = e.getKeyCode();
         if (key == KeyEvent.VK_LEFT) {
-            BasketX -= 5;
+            BasketX -= 1;
             if (BasketX < 0) {
                 BasketX = 0; 
             }
         } else if (key == KeyEvent.VK_RIGHT) {
-            BasketX += 5;
+            BasketX += 1;
             if (BasketX > maxWidth - basketWidth) {
                 BasketX = maxWidth - basketWidth; 
             }
