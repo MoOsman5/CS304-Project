@@ -24,6 +24,9 @@ public class MainEventListener implements GLEventListener,KeyListener {
     int BasketX = 50;  
     int BasketY = 15;
     int basketWidth = 10; 
+     int health = 3;  
+    int heartIndex = 7; 
+
     String assetsFolderName = "Assets";
     String textureNames[] = {"Chicken1.png","Chicken2.png","Basket.png","Treebranch.png","Egg1.png","Egg2.png","Egg3.png","Health.png","Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
@@ -90,6 +93,18 @@ public class MainEventListener implements GLEventListener,KeyListener {
         Egg egg = Eggs.get(i);
         DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
         egg.y--;
+        
+        if (egg.y <= BasketY + basketWidth-7 && egg.y >= BasketY && 
+                egg.x >= BasketX && egg.x <= BasketX + basketWidth-7) {
+                Eggs.remove(i);
+                i--; 
+            } else if (egg.y < 0) {
+                
+                health--; 
+                Eggs.remove(i);
+                i--; 
+            }
+       
     }
 
           if (Math.random() < count) {
@@ -102,14 +117,16 @@ public class MainEventListener implements GLEventListener,KeyListener {
            DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
     
             DrawHealth(gl);
+            
+            
 
            
    }
-    public void DrawHealth(GL gl) {
-        for (int i = 0; i < 3; i++) {
-            DrawSprite(gl, 5 + i * 10, 90, 7, 1, 0); // رسم القلوب في أعلى الشاشة
+      public void DrawHealth(GL gl) {
+        for (int i = 0; i < health; i++) {
+            DrawSprite(gl, 5 + i * 10, 90, heartIndex, 1, 0); // رسم القلوب في أعلى الشاشة
         }
-    } 
+    }
 public double sqrdDistance(int x, int y, int x1, int y1){
         return Math.pow(x-x1,2)+Math.pow(y-y1,2);
     }
