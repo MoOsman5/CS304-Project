@@ -98,12 +98,9 @@ public class MainEventListener implements GLEventListener, KeyListener {
                 if (egg.y < 0) {
                     Speed-=5;
                    Remove.add(egg);
+                   health--;
                 }
-                if (egg.y < 0) {
-                health--; 
-                Eggs.remove(i);
-                i--; 
-            }
+                
                 
         }
         
