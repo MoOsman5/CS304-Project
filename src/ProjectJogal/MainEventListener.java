@@ -71,7 +71,7 @@ public class MainEventListener implements GLEventListener,KeyListener {
           
         }
          
-         for (int i = 0; i < 5; i++) {
+         for (int i = 0; i < 4; i++) {
             DrawSprite(gl, x[i], y[i],chickenIndex , 2, 0);   
         }
           //Treebranch
