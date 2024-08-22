@@ -11,6 +11,11 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class MainEventListener implements GLEventListener, KeyListener {
     int chickenIndex = 0;  
@@ -28,6 +33,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
     int basketWidth = 10;
      int health = 3;  
     int heartIndex = 7; 
+    
     String assetsFolderName = "Assets";
     String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
@@ -35,7 +41,10 @@ public class MainEventListener implements GLEventListener, KeyListener {
     int BasketIndex = 2;
     private List<Egg> Eggs = new ArrayList<>();
      List<Egg> Remove = new ArrayList<>();
-    
+    private Clip backgroundMusic; 
+     private Clip gameOverMusic;
+
+
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // This will clear the background color to white
@@ -60,7 +69,20 @@ public class MainEventListener implements GLEventListener, KeyListener {
                 System.out.println(e);
                 e.printStackTrace();
             }
+            
+            
         }
+        
+         try {
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/gg.wav"));
+        backgroundMusic = AudioSystem.getClip();
+        backgroundMusic.open(audioStream);
+        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); 
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        e.printStackTrace();
+    }
+
+
     }
 
     @Override
@@ -141,10 +163,16 @@ public class MainEventListener implements GLEventListener, KeyListener {
         }
         else {
          DrawGameOver(gl);
+          stopBackgroundMusic();
         }
         
     }
-    
+    public void stopBackgroundMusic() {
+    if (backgroundMusic != null && backgroundMusic.isRunning()) {
+        backgroundMusic.stop();
+    }
+}
+
     
     public void DrawHealth(GL gl) {
         for (int i = 0; i < health; i++) {
@@ -153,8 +181,21 @@ public class MainEventListener implements GLEventListener, KeyListener {
     }
    
 public void DrawGameOver(GL gl) {
-    int gameOverIndex = 8; 
-    DrawSprite(gl, 40, 50, gameOverIndex, 5, 0); 
+    int gameOverIndex = 8;
+    DrawSprite(gl, 40, 50, gameOverIndex, 5, 0);
+    
+   
+    stopBackgroundMusic();
+    if (gameOverMusic == null) {
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/start.wav"));
+            gameOverMusic = AudioSystem.getClip();
+            gameOverMusic.open(audioStream);
+            gameOverMusic.start(); 
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 
