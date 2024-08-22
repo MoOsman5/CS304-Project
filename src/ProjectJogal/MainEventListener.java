@@ -20,30 +20,30 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class MainEventListener implements GLEventListener, KeyListener {
     int chickenIndex = 0;
     int RepeatCounter = 0;
-     int gameOverIndex = 8;
+    int gameOverIndex = 8;
     int NumberChicken = 5;
     int maxWidth = 100;
     int maxHeight = 100;
     int[] x = {5, 25, 45, 65, 85};
     int[] y = {70, 70, 70, 70, 70};
-    
+    boolean gameStarted = false;
+    int score = 0;
     int CountNum = 0;
-    int Speed = 100; 
-    int BasketX = 50;  
+    int Speed = 100;
+    int BasketX = 50;
     int BasketY = 5;
     int basketWidth = 10;
-     int health = 3;  
-    int heartIndex = 7; 
-    
+    int health = 3;
+    int heartIndex = 7;
+
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png"};
-    TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png"};    TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
     private List<Egg> Eggs = new ArrayList<>();
-     List<Egg> Remove = new ArrayList<>();
-    private Clip backgroundMusic; 
-     private Clip gameOverMusic;
+    List<Egg> Remove = new ArrayList<>();
+    private Clip backgroundMusic;
+    private Clip gameOverMusic;
 
 
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -70,118 +70,137 @@ public class MainEventListener implements GLEventListener, KeyListener {
                 System.out.println(e);
                 e.printStackTrace();
             }
-            
-            
+
+
         }
-        
-         try {
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/ChickenSound.wav"));
-        backgroundMusic = AudioSystem.getClip();
-        backgroundMusic.open(audioStream);
-        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); 
-    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-        e.printStackTrace();
-    }
+
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/ChickenSound.wav"));
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(audioStream);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
 
 
     }
+
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
         gl.glLoadIdentity();
-        DrawBackground(gl);
-          handleKeyPress();
-        if(Eggs.isEmpty()){
-      addEgg();
-      
-        }
-         
-        
-        if(health>0){
-       
-       
-        
-    
-        // Draw eggs
-        for (int i = 0; i < Eggs.size(); i++) {
-            Egg egg = Eggs.get(i);
-            DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
-            egg.y--;
-            
-                if (egg.y < 0) {
-                    Speed-=5;
-                   Remove.add(egg);
-                   health--;
+
+        if (!gameStarted) {
+            System.out.println("Game has not started: " + gameStarted);
+            DrawStartMenu(gl); // Draw the start menu if the game hasn't started
+        } else {
+            DrawBackground(gl);
+            if (health > 0) {
+                handleKeyPress();
+
+                if (Eggs.isEmpty()) {
+                    addEgg();
                 }
-                
-                
+
+                // Chicken animation logic
+                RepeatCounter++;
+                if (RepeatCounter >= 5) {
+                    chickenIndex++;
+                    chickenIndex = chickenIndex % 2;
+                    RepeatCounter = 0;
+                }
+
+                // Draw chickens
+                for (int i = 0; i < NumberChicken; i++) {
+                    DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
+                }
+
+                // Draw tree branch
+                DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
+
+                // Draw eggs and handle basket collection
+                for (Egg egg : Eggs) {
+                    DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
+                    egg.y--;
+
+                    if (sqrdDistance(egg.x, egg.y, BasketX, BasketY) < 16) { // Adjust the threshold as needed
+                        Remove.add(egg); // Remove the egg if it touches the basket
+                        score++; // Increase the score
+                    } else if (egg.y < 0) {
+                        Speed -= 5;
+                        Remove.add(egg); // Remove the egg if it falls below the screen
+                        health--; // Decrease health
+                    }
+                }
+
+                Eggs.removeAll(Remove); // Remove all eggs that were collected or fell off
+
+                CountNum++;
+                if (CountNum >= Speed) {
+                    addEgg();
+                    CountNum = 0;
+                }
+
+                System.out.println("Current Score: " + score); // Display the score in the console
+
+                DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0); // Draw the basket
+                DrawHealth(gl); // Draw the health status
+            } else {
+                DrawGameOver(gl); // Draw the game over screen
+                stopBackgroundMusic();
+            }
         }
-        
-        Eggs.removeAll(Remove);
-      
-        CountNum++;
-        if (CountNum >=Speed ) {
-            
-            addEgg();
-            CountNum = 0;
-        }
-          System.out.println(CountNum+"   "+ Speed);
-  
-     
-        DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
-         DrawHealth(gl);
-            }else {
-        
-         DrawGameOver(gl);
-         stopBackgroundMusic();
-        }
-        
     }
     public void stopBackgroundMusic() {
         if (backgroundMusic != null && backgroundMusic.isRunning()) {
             backgroundMusic.stop();
         }
     }
-}
 
-    
+    public void DrawStartMenu(GL gl) {
+        gl.glEnable(GL.GL_BLEND);
+        int startMenuIndex = 10;
+        DrawSprite(gl, 50, 50, startMenuIndex, 10, 0);
+        gl.glDisable(GL.GL_BLEND);
+    }
     public void DrawHealth(GL gl) {
         for (int i = 0; i < health; i++) {
             DrawSprite(gl, 5 + i * 10, 90, heartIndex, 1, 0);
         }
     }
-   
-public void DrawGameOver(GL gl) {
-  
-    DrawSprite(gl, 40, 50, gameOverIndex, 8, 0);
-    
-   
-    stopBackgroundMusic();
-    if (gameOverMusic == null) {
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/gameover.wav"));
-            gameOverMusic = AudioSystem.getClip();
-            gameOverMusic.open(audioStream);
-            gameOverMusic.start(); 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
+
+    public void DrawGameOver(GL gl) {
+
+        DrawSprite(gl, 40, 50, gameOverIndex, 8, 0);
+
+
+        stopBackgroundMusic();
+        if (gameOverMusic == null) {
+            try {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/gameover.wav"));
+                gameOverMusic = AudioSystem.getClip();
+                gameOverMusic.open(audioStream);
+                gameOverMusic.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+            }
         }
     }
-
-
 
 
     public double sqrdDistance(int x, int y, int x1, int y1) {
         return Math.pow(x - x1, 2) + Math.pow(y - y1, 2);
     }
 
+
     public void addEgg() {
         int characterIndex = (int) (Math.random() * NumberChicken);
         int EggX = x[characterIndex];
         int EggY = y[characterIndex];
-                //y[characterIndex];
+        //y[characterIndex];
         int index = (int) (Math.random() * 3) + 4;
         Eggs.add(new Egg(EggX, EggY, index));
     }
@@ -283,24 +302,41 @@ public void DrawGameOver(GL gl) {
 //            if (BasketY > 0) {
 //                BasketY--;
 //            }
-//      
+//
 //        }
 //        if (isKeyPressed(KeyEvent.VK_UP)) {
 //            if (BasketY < maxHeight-10) {
 //            BasketY++;
 //            }
 //        }
-        
+
     }
 
     public BitSet keyBits = new BitSet(256);
 
-    @Override
-    public void keyPressed(final KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        keyBits.set(keyCode);
-    }
 
+    @Override
+    public void keyPressed(final KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_SPACE:
+                gameStarted = true;
+                break;
+            case KeyEvent.VK_LEFT:
+                BasketX -= 2;
+                if (BasketX < 0) {
+                    BasketX = 0;
+                }
+                break;
+            case KeyEvent.VK_RIGHT:
+                BasketX += 2;
+                if (BasketX > maxWidth - basketWidth) {
+                    BasketX = maxWidth - basketWidth;
+                }
+                break;
+            default:
+                // Handle letter key presses
+        }
+    }
     @Override
     public void keyReleased(final KeyEvent event) {
         int keyCode = event.getKeyCode();
@@ -309,7 +345,7 @@ public void DrawGameOver(GL gl) {
 
     @Override
     public void keyTyped(final KeyEvent event) {
-        // don't care 
+        // don't care
     }
 
     public boolean isKeyPressed(final int keyCode) {

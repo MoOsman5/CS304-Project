@@ -30,7 +30,7 @@ public class Main extends JFrame {
         setSize(700, 700);
         setLocationRelativeTo(null);
         
-        setSize(1300, 1000);
+        setSize(1300, 800);
         setLocationRelativeTo(null);
         setVisible(true);
         setFocusable(true);
