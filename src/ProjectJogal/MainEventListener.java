@@ -3,6 +3,8 @@ package ProjectJogal;
 import Texture.TextureReader;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -17,7 +19,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class MainEventListener implements GLEventListener, KeyListener {
+public class MainEventListener implements GLEventListener, KeyListener, MouseListener {
     int chickenIndex = 0;
     int RepeatCounter = 0;
     int gameOverIndex = 8;
@@ -37,15 +39,23 @@ public class MainEventListener implements GLEventListener, KeyListener {
     int heartIndex = 7;
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png"};    TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png"};
+    TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
     private List<Egg> Eggs = new ArrayList<>();
     List<Egg> Remove = new ArrayList<>();
     private Clip backgroundMusic;
     private Clip gameOverMusic;
+    private boolean isStartButtonClicked = false;
+    private int startButtonIndex =12;
+    private int startButtonX = 40;
+    private int startButtonY = 30;
+    private int startButtonWidth = 20;
+    private int startButtonHeight = 10;
 
 
+    @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // This will clear the background color to white
@@ -70,8 +80,6 @@ public class MainEventListener implements GLEventListener, KeyListener {
                 System.out.println(e);
                 e.printStackTrace();
             }
-
-
         }
 
         try {
@@ -83,9 +91,8 @@ public class MainEventListener implements GLEventListener, KeyListener {
             e.printStackTrace();
         }
 
-
+        glAutoDrawable.addMouseListener(this);
     }
-
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
@@ -95,7 +102,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
 
         if (!gameStarted) {
             System.out.println("Game has not started: " + gameStarted);
-            DrawStartMenu(gl); // Draw the start menu if the game hasn't started
+            DrawStartMenu(gl);
         } else {
             DrawBackground(gl);
             if (health > 0) {
@@ -105,7 +112,6 @@ public class MainEventListener implements GLEventListener, KeyListener {
                     addEgg();
                 }
 
-                // Chicken animation logic
                 RepeatCounter++;
                 if (RepeatCounter >= 5) {
                     chickenIndex++;
@@ -113,30 +119,27 @@ public class MainEventListener implements GLEventListener, KeyListener {
                     RepeatCounter = 0;
                 }
 
-                // Draw chickens
                 for (int i = 0; i < NumberChicken; i++) {
                     DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
                 }
 
-                // Draw tree branch
                 DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
 
-                // Draw eggs and handle basket collection
                 for (Egg egg : Eggs) {
                     DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
                     egg.y--;
 
-                    if (sqrdDistance(egg.x, egg.y, BasketX, BasketY) < 16) { // Adjust the threshold as needed
-                        Remove.add(egg); // Remove the egg if it touches the basket
-                        score++; // Increase the score
+                    if (sqrdDistance(egg.x, egg.y, BasketX, BasketY) < 16) {
+                        Remove.add(egg);
+                        score++;
                     } else if (egg.y < 0) {
                         Speed -= 5;
-                        Remove.add(egg); // Remove the egg if it falls below the screen
-                        health--; // Decrease health
+                        Remove.add(egg);
+                        health--;
                     }
                 }
 
-                Eggs.removeAll(Remove); // Remove all eggs that were collected or fell off
+                Eggs.removeAll(Remove);
 
                 CountNum++;
                 if (CountNum >= Speed) {
@@ -144,16 +147,17 @@ public class MainEventListener implements GLEventListener, KeyListener {
                     CountNum = 0;
                 }
 
-                System.out.println("Current Score: " + score); // Display the score in the console
+                System.out.println("Current Score: " + score);
 
-                DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0); // Draw the basket
-                DrawHealth(gl); // Draw the health status
+                DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
+                DrawHealth(gl);
             } else {
-                DrawGameOver(gl); // Draw the game over screen
+                DrawGameOver(gl);
                 stopBackgroundMusic();
             }
         }
     }
+
     public void stopBackgroundMusic() {
         if (backgroundMusic != null && backgroundMusic.isRunning()) {
             backgroundMusic.stop();
@@ -163,9 +167,11 @@ public class MainEventListener implements GLEventListener, KeyListener {
     public void DrawStartMenu(GL gl) {
         gl.glEnable(GL.GL_BLEND);
         int startMenuIndex = 10;
-        DrawSprite(gl, 50, 50, startMenuIndex, 10, 0);
+        DrawSprite(gl, 30, 47, startMenuIndex, 13, 0);
+        DrawSprite(gl, startButtonX, startButtonY, startButtonIndex, 2, 0);
         gl.glDisable(GL.GL_BLEND);
     }
+
     public void DrawHealth(GL gl) {
         for (int i = 0; i < health; i++) {
             DrawSprite(gl, 5 + i * 10, 90, heartIndex, 1, 0);
@@ -173,9 +179,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
     }
 
     public void DrawGameOver(GL gl) {
-
         DrawSprite(gl, 40, 50, gameOverIndex, 8, 0);
-
 
         stopBackgroundMusic();
         if (gameOverMusic == null) {
@@ -190,17 +194,14 @@ public class MainEventListener implements GLEventListener, KeyListener {
         }
     }
 
-
     public double sqrdDistance(int x, int y, int x1, int y1) {
         return Math.pow(x - x1, 2) + Math.pow(y - y1, 2);
     }
-
 
     public void addEgg() {
         int characterIndex = (int) (Math.random() * NumberChicken);
         int EggX = x[characterIndex];
         int EggY = y[characterIndex];
-        //y[characterIndex];
         int index = (int) (Math.random() * 3) + 4;
         Eggs.add(new Egg(EggX, EggY, index));
     }
@@ -255,11 +256,10 @@ public class MainEventListener implements GLEventListener, KeyListener {
 
     public void DrawBackground(GL gl) {
         gl.glEnable(GL.GL_BLEND);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[textures.length - 1]); // Turn Blending On
+        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[textures.length - 1]);
 
         gl.glPushMatrix();
         gl.glBegin(GL.GL_QUADS);
-        // Front Face
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
@@ -285,7 +285,6 @@ public class MainEventListener implements GLEventListener, KeyListener {
     }
 
     public void handleKeyPress() {
-
         if (isKeyPressed(KeyEvent.VK_LEFT)) {
             BasketX -= 2;
             if (BasketX < 0) {
@@ -298,22 +297,9 @@ public class MainEventListener implements GLEventListener, KeyListener {
                 BasketX = maxWidth - basketWidth;
             }
         }
-//        if (isKeyPressed(KeyEvent.VK_DOWN)) {
-//            if (BasketY > 0) {
-//                BasketY--;
-//            }
-//
-//        }
-//        if (isKeyPressed(KeyEvent.VK_UP)) {
-//            if (BasketY < maxHeight-10) {
-//            BasketY++;
-//            }
-//        }
-
     }
 
     public BitSet keyBits = new BitSet(256);
-
 
     @Override
     public void keyPressed(final KeyEvent e) {
@@ -337,6 +323,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
                 // Handle letter key presses
         }
     }
+
     @Override
     public void keyReleased(final KeyEvent event) {
         int keyCode = event.getKeyCode();
@@ -351,4 +338,33 @@ public class MainEventListener implements GLEventListener, KeyListener {
     public boolean isKeyPressed(final int keyCode) {
         return keyBits.get(keyCode);
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (!gameStarted) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            System.out.println(mouseX + " " + mouseY);
+            double gameX = (mouseX / (double) e.getComponent().getWidth()) * maxWidth;
+            double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
+
+            if (gameX >= startButtonX && gameX <= startButtonX + startButtonWidth &&
+                    gameY >= startButtonY && gameY <= startButtonY + startButtonHeight) {
+                gameStarted = true;
+                System.out.println("Game started!");
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }
