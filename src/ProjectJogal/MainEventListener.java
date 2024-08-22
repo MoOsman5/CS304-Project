@@ -344,6 +344,10 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                     restartGame();
                 }
                 break;
+            case KeyEvent.VK_ESCAPE:
+                if (gameStarted) {
+                    gameStarted = false;
+                }
             default:
                 // Handle other key presses
         }
