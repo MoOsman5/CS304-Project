@@ -19,11 +19,12 @@ public class MainEventListener implements GLEventListener, KeyListener {
     int maxWidth = 100;
     int maxHeight = 100;
     int[] x = {5, 25, 45, 65, 85};
-    int[] y = {70, 69, 69, 70, 70};
+    int[] y = {70, 70, 70, 70, 70};
+    
     int CountNum = 0;
     int Speed = 100; 
     int BasketX = 50;  
-    int BasketY = 15;
+    int BasketY = 5;
     int basketWidth = 10;
      int health = 3;  
     int heartIndex = 7; 
@@ -68,26 +69,17 @@ public class MainEventListener implements GLEventListener, KeyListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       
         gl.glLoadIdentity(); 
         DrawBackground(gl);
-        if(health>0){
-         handleKeyPress();
+          handleKeyPress();
         if(Eggs.isEmpty()){
       addEgg();
+      
         }
-        // Chicken
-        RepeatCounter++;
-        if (RepeatCounter >= 5) {
-            chickenIndex++;
-            chickenIndex = chickenIndex % 2;
-            RepeatCounter = 0;
-        }
+         
         
-        // Draw chicken
-        for (int i = 0; i < NumberChicken; i++) {
-            DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);   
-        }
+        if(health>0){
+       
+       
         
-        // Draw tree branch
-        DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
     
         // Draw eggs
         for (int i = 0; i < Eggs.size(); i++) {
@@ -96,15 +88,21 @@ public class MainEventListener implements GLEventListener, KeyListener {
             egg.y--;
             
                 if (egg.y < 0) {
-                    Speed-=5;
+                    Speed-=70;
+                   Remove.add(egg);
+                    health--; 
+                }
+                    
+               
+                  double dist = sqrdDistance(egg.x,egg.y,BasketX,BasketY);
+                  double radii = Math.pow(2*0.03*maxHeight,2);
+                    boolean isCollided = dist<=radii;
+        System.out.println(isCollided + ", "+ dist + ", "+ radii);
+//        
+         if(isCollided==true){
                    Remove.add(egg);
                 }
-                if (egg.y < 0) {
-                health--; 
-                Eggs.remove(i);
-                i--; 
-            }
-                
+//               
         }
         
         Eggs.removeAll(Remove);
@@ -115,14 +113,36 @@ public class MainEventListener implements GLEventListener, KeyListener {
             addEgg();
             CountNum = 0;
         }
-          System.out.println(CountNum+"   "+ Speed);
+        
+         // System.out.println(CountNum+"   "+ Speed);
   
      
         DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
-         DrawHealth(gl);}else {
+         DrawHealth(gl);
+         
+      
+                 // Chicken
+        RepeatCounter++;
+        if (RepeatCounter >= 5) {
+            chickenIndex++;
+            chickenIndex = chickenIndex % 2;
+            RepeatCounter = 0;
+        }
         
+         //Draw chicken
+        for (int i = 0; i < NumberChicken; i++) {
+            DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);   
+        }
+        
+        // Draw tree branch
+        DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
+         
+         
+        }
+        else {
          DrawGameOver(gl);
         }
+        
     }
     
     
@@ -131,18 +151,23 @@ public class MainEventListener implements GLEventListener, KeyListener {
             DrawSprite(gl, 5 + i * 10, 90, heartIndex, 1, 0); 
         }
     }
+   
 public void DrawGameOver(GL gl) {
     int gameOverIndex = 8; 
     DrawSprite(gl, 40, 50, gameOverIndex, 5, 0); 
 }
+
+
     public double sqrdDistance(int x, int y, int x1, int y1) {
         return Math.pow(x - x1, 2) + Math.pow(y - y1, 2);
     }
 
+    
     public void addEgg() {
         int characterIndex = (int) (Math.random() * NumberChicken);
         int EggX = x[characterIndex];
         int EggY = y[characterIndex];
+                //y[characterIndex];
         int index = (int) (Math.random() * 3) + 4;
         Eggs.add(new Egg(EggX, EggY, index));
     }
@@ -240,6 +265,17 @@ public void DrawGameOver(GL gl) {
                 BasketX = maxWidth - basketWidth; 
             }
         }
+//        if (isKeyPressed(KeyEvent.VK_DOWN)) {
+//            if (BasketY > 0) {
+//                BasketY--;
+//            }
+//      
+//        }
+//        if (isKeyPressed(KeyEvent.VK_UP)) {
+//            if (BasketY < maxHeight-10) {
+//            BasketY++;
+//            }
+//        }
         
     }
 
