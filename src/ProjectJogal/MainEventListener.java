@@ -20,6 +20,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class MainEventListener implements GLEventListener, KeyListener {
     int chickenIndex = 0;  
     int RepeatCounter = 0;
+     int gameOverIndex = 8;
     int NumberChicken = 5;
     int maxWidth = 100;
     int maxHeight = 100;
@@ -74,7 +75,7 @@ public class MainEventListener implements GLEventListener, KeyListener {
         }
         
          try {
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/gg.wav"));
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/ChickenSound.wav"));
         backgroundMusic = AudioSystem.getClip();
         backgroundMusic.open(audioStream);
         backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); 
@@ -181,14 +182,14 @@ public class MainEventListener implements GLEventListener, KeyListener {
     }
    
 public void DrawGameOver(GL gl) {
-    int gameOverIndex = 8;
-    DrawSprite(gl, 40, 50, gameOverIndex, 5, 0);
+  
+    DrawSprite(gl, 40, 50, gameOverIndex, 8, 0);
     
    
     stopBackgroundMusic();
     if (gameOverMusic == null) {
         try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/start.wav"));
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(getClass().getResource("/" + "Sound" + "/gameover.wav"));
             gameOverMusic = AudioSystem.getClip();
             gameOverMusic.open(audioStream);
             gameOverMusic.start(); 
