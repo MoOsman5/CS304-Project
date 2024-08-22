@@ -39,7 +39,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int heartIndex = 7;
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png"};
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png","instructions.png","exit.png","Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -49,12 +49,23 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private Clip gameOverMusic;
     private boolean isStartButtonClicked = false;
     private int startButtonIndex =12;
+    int instructionButtonIndex = 14; // You'll need to add this texture
+    int exitButtonIndex = 15; // You'll need to add this texture
     private int startButtonX = 40;
-    private int startButtonY = 30;
     private int startButtonWidth = 20;
     private int startButtonHeight = 10;
+    private int instructionButtonX = 70;
+    private int exitButtonX = 10;
+    private int buttonWidth = 20;
+    private int buttonHeight = 10;
+    private int buttonSpacing = 5; // Space between buttons
+    private int startMenuCenterX = 50; // Center of the start menu
+    private int startButtonY = 60;
+    private int instructionButtonY = 45;
+    private int exitButtonY = 30;
 
-
+    // Calculate X position to center the buttons
+    private int buttonsX = startMenuCenterX - (buttonWidth / 2);
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
@@ -168,7 +179,9 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
         gl.glEnable(GL.GL_BLEND);
         int startMenuIndex = 10;
         DrawSprite(gl, 30, 47, startMenuIndex, 13, 0);
-        DrawSprite(gl, startButtonX, startButtonY, startButtonIndex, 2, 0);
+        DrawSprite(gl, buttonsX, startButtonY, startButtonIndex, 2, 0);
+        DrawSprite(gl, buttonsX, instructionButtonY, instructionButtonIndex, 2, 0);
+        DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 2, 0);
         gl.glDisable(GL.GL_BLEND);
     }
 
@@ -273,6 +286,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
         gl.glDisable(GL.GL_BLEND);
     }
+    private void showInstructions() {
+        // Implement this method to show game instructions
+        System.out.println("Showing instructions...");
+        // You might want to set a flag to display an instructions screen
+    }
 
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int width, int height) {
@@ -305,7 +323,9 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     public void keyPressed(final KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SPACE:
-                gameStarted = true;
+                if (!gameStarted) {
+                    gameStarted = true;
+                }
                 break;
             case KeyEvent.VK_LEFT:
                 BasketX -= 2;
@@ -319,8 +339,30 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                     BasketX = maxWidth - basketWidth;
                 }
                 break;
+            case KeyEvent.VK_R:
+                if (health <= 0) {
+                    restartGame();
+                }
+                break;
             default:
-                // Handle letter key presses
+                // Handle other key presses
+        }
+    }
+
+    private void restartGame() {
+        // Reset game state
+        gameStarted = true;
+        score = 0;
+        health = 3;
+        Speed = 100;
+        BasketX = 50;
+        Eggs.clear();
+        if (gameOverMusic != null) {
+            gameOverMusic.stop();
+            gameOverMusic = null;
+        }
+        if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
 
@@ -344,18 +386,21 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
         if (!gameStarted) {
             int mouseX = e.getX();
             int mouseY = e.getY();
-            System.out.println(mouseX + " " + mouseY);
             double gameX = (mouseX / (double) e.getComponent().getWidth()) * maxWidth;
             double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
 
-            if (gameX >= startButtonX && gameX <= startButtonX + startButtonWidth &&
-                    gameY >= startButtonY && gameY <= startButtonY + startButtonHeight) {
-                gameStarted = true;
-                System.out.println("Game started!");
+            if (gameX >= buttonsX && gameX <= buttonsX + buttonWidth) {
+                if (gameY >= startButtonY && gameY <= startButtonY + buttonHeight) {
+                    gameStarted = true;
+                    System.out.println("Game started!");
+                } else if (gameY >= instructionButtonY && gameY <= instructionButtonY + buttonHeight) {
+                    showInstructions();
+                } else if (gameY >= exitButtonY && gameY <= exitButtonY + buttonHeight) {
+                    System.exit(0);
+                }
             }
         }
     }
-
     @Override
     public void mousePressed(MouseEvent e) {}
 
