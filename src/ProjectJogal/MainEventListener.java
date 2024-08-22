@@ -346,7 +346,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                 break;
             case KeyEvent.VK_ESCAPE:
                 if (gameStarted) {
-                    gameStarted = false;
+                    backToMenu();
                 }
             default:
                 // Handle other key presses
@@ -356,6 +356,22 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private void restartGame() {
         // Reset game state
         gameStarted = true;
+        score = 0;
+        health = 3;
+        Speed = 100;
+        BasketX = 50;
+        Eggs.clear();
+        if (gameOverMusic != null) {
+            gameOverMusic.stop();
+            gameOverMusic = null;
+        }
+        if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+        }
+    }
+    private void backToMenu() {
+        // Reset game state
+        gameStarted = false;
         score = 0;
         health = 3;
         Speed = 100;
