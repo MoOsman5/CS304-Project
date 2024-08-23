@@ -22,8 +22,11 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class MainEventListener implements GLEventListener, KeyListener, MouseListener {
+    private GL gl;
     int chickenIndex = 0;
     int startMenuIndex = 10;
+    int insIndex = 17;
+     int LEVELIndex = 18;
     int RepeatCounter = 0;
     int gameOverIndex = 8;
     int NumberChicken = 5;
@@ -34,15 +37,17 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     boolean gameStarted = false;
     int score = 0;
     int CountNum = 0;
-    int Speed = 100;
+    int Level=1;
+    int Speed = 50;
     int BasketX = 50;
     int BasketY = 5;
     int basketWidth = 10;
     int health = 3;
     int heartIndex = 7;
+    
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png","instructions.png","exit.png","Score.png","Background2.png"};
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png","instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -77,9 +82,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 int Basket2Y = 5;
 int basket2Width = 10;
 boolean player2Active = false;
+boolean inst=false;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
+        this.gl = glAutoDrawable.getGL();
         GL gl = glAutoDrawable.getGL();
         gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // This will clear the background color to white
 
@@ -131,7 +138,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
         DrawStartMenu(gl);
     } else {
         DrawBackground(gl);
-        TypeText(gl);
+        TypeText(gl,score,0.13,0.93);
+        TypeText(gl,Level,0.59,0.92);
+        
         if (health > 0) {
             for (Egg egg : Eggs) {
                 DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
@@ -149,11 +158,12 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 if (isCollided) {
                     Remove.add(egg);
                     score++;
-                      if (score%10==0 && Speed > 20) {
-                        Speed -= 20;
-                    }
+                     if (score%10==0 ) {
+                    Speed -= 5;
+                    Level+=1;
                 }
-
+                }
+               
                 if (player2Active) {
                     double dist2 = sqrdDistance(egg.x, egg.y, Basket2X, Basket2Y);
                     boolean isCollided2 = dist2 <= radii;
@@ -161,10 +171,11 @@ public void display(GLAutoDrawable glAutoDrawable) {
                     if (isCollided2) {
                         Remove.add(egg);
                         score++;
-                          if (score%10==0 && Speed > 20) {
-                        Speed -= 20;
+                          if (score%10==0) {
+                    Speed -= 20;
+                          }
                     }
-                    }
+                    
                 }
             }
 
@@ -174,6 +185,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 addEgg();
                 CountNum = 0;
             }
+            System.out.println(Speed);
 
             DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0); // Player 1's basket
 
@@ -197,18 +209,23 @@ public void display(GLAutoDrawable glAutoDrawable) {
             stopBackgroundMusic();
         }
     }
+    if(inst==true){
+        DrawSprite(gl, 45, 45, insIndex, 10, 0);
+        
+    }
 }
 
     
-     public void TypeText(GL gl) {
+     public void TypeText(GL gl,int Text,double x, double y) {
         gl.glPushAttrib(GL_CURRENT_BIT);
         gl.glColor4f(0f, 0f, 0f, 1.0f);
         GLUT glut = new GLUT();
-        gl.glRasterPos2d(.13, 0.93);
+        gl.glRasterPos2d(x, y);
         
-        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24,"" + score);
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24,"" + Text);
         gl.glPopAttrib();
          DrawSprite(gl, 45, 91, ScoreIndex,2 , 0);
+         DrawSprite(gl, 70, 92, LEVELIndex,2 , 0);
     }
     
     
@@ -221,14 +238,16 @@ public void display(GLAutoDrawable glAutoDrawable) {
     }
 
     public void DrawStartMenu(GL gl) {
+   
         gl.glEnable(GL.GL_BLEND);
-       
+       if(inst==false){
         DrawSprite(gl,45 ,45, startMenuIndex, 10, 0);
         DrawSprite(gl, buttonsX, startButtonY, startButtonIndex, 1.5, 0);
         DrawSprite(gl, buttonsX, instructionButtonY, instructionButtonIndex, 2, 0);
         DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 1.4, 0);
- 
+    }
         gl.glDisable(GL.GL_BLEND);
+       
     }
 
     public void DrawHealth(GL gl) {
@@ -333,9 +352,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
         gl.glDisable(GL.GL_BLEND);
     }
     private void showInstructions() {
-        // Implement this method to show game instructions
-        System.out.println("Showing instructions...");
-        // You might want to set a flag to display an instructions screen
+        
+   // DrawSprite(gl, instructionButtonX, instructionButtonY, insIndex, 1.5, 0);
     }
 
     @Override
@@ -402,6 +420,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 if (gameStarted) {
                     backToMenu();
                 }
+                if(inst==true){
+                    inst=false;
+                }
                 
                  case KeyEvent.VK_A:
             if (player2Active) {
@@ -450,7 +471,7 @@ private void backToMenu() {
     Speed = 100;
     BasketX = 50;
     Basket2X = 70; // Reset Player 2 position
-    player2Active = false; // Deactivate Player 2 when returning to menu
+    player2Active = false;// Deactivate Player 2 when returning to menu
     Eggs.clear();
     if (gameOverMusic != null) {
         gameOverMusic.stop();
@@ -478,6 +499,7 @@ private void backToMenu() {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+   
         if (!gameStarted) {
             int mouseX = e.getX();
             int mouseY = e.getY();
@@ -489,7 +511,9 @@ private void backToMenu() {
                     gameStarted = true;
                     System.out.println("Game started!");
                 } else if (gameY >= instructionButtonY && gameY <= instructionButtonY + buttonHeight) {
-                    showInstructions();
+                   
+                  // showInstructions();
+                  inst=true;
                 } else if (gameY >= exitButtonY && gameY <= exitButtonY + buttonHeight) {
                     System.exit(0);
                 }
