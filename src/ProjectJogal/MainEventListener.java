@@ -47,7 +47,9 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png","instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png"};
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", 
+        "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png",
+        "instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png","mute.png","unmute.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -61,6 +63,9 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int instructionButtonIndex = 14;  
     int exitButtonIndex = 15; 
     int ScoreIndex = 16;
+    int muteIndex=21;
+    int unmuteIndex=22;
+    
     private int OnePlayerX = 40;
     private int OnePlayerWidth = 20;
     private int OnePlayerHeight = 10;
@@ -239,19 +244,29 @@ public void display(GLAutoDrawable glAutoDrawable) {
         }
     }
 
-    public void DrawStartMenu(GL gl) {
-   
-        gl.glEnable(GL.GL_BLEND);
-       if(inst==false){
-        DrawSprite(gl,45 ,45, startMenuIndex, 10, 0);
+   public void DrawStartMenu(GL gl) {
+    gl.glEnable(GL.GL_BLEND);
+    if (inst == false) {
+        DrawSprite(gl, 45, 45, startMenuIndex, 10, 0);
         DrawSprite(gl, buttonsX, OnePlayerY, OnePlayerIndex, 1.5, 0);
         DrawSprite(gl, buttonsX, TwoPlayersY, TwoPlayersIndex, 1.5, 0);
         DrawSprite(gl, buttonsX, instructionButtonY, instructionButtonIndex, 2, 0);
         DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 1.4, 0);
+
+        // Display either mute.png or unmute.png
+        if (isMuted) {
+            DrawSprite(gl, 90, 90, muteIndex, 0.5, 0);
+        } else {
+            DrawSprite(gl, 90, 90, unmuteIndex, 0.5, 0);
+        }
     }
-        gl.glDisable(GL.GL_BLEND);
-       
+    gl.glDisable(GL.GL_BLEND);
+}
+public void startBackgroundMusic() {
+    if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
     }
+}
 
     public void DrawHealth(GL gl) {
         for (int i = 0; i < health; i++) {
@@ -337,7 +352,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
 
     public void DrawBackground(GL gl) {
         gl.glEnable(GL.GL_BLEND);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[textures.length - 1]);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[textures.length - 3]);
 
         gl.glPushMatrix();
         gl.glBegin(GL.GL_QUADS);
@@ -497,34 +512,47 @@ private void backToMenu() {
     public boolean isKeyPressed(final int keyCode) {
         return keyBits.get(keyCode);
     }
+private boolean isMuted = false;
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-   
-        if (!gameStarted) {
-            int mouseX = e.getX();
-            int mouseY = e.getY();
-            double gameX = (mouseX / (double) e.getComponent().getWidth()) * maxWidth;
-            double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
+public void mouseClicked(MouseEvent e) {
+    
+    if (!gameStarted) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+        double gameX = (mouseX / (double) e.getComponent().getWidth()) * maxWidth;
+        double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
 
-            if (gameX >= buttonsX && gameX <= buttonsX + buttonWidth) {
-                if (gameY >= OnePlayerY && gameY <= OnePlayerY + buttonHeight) {
-                    gameStarted = true; 
-                    player2Active = false;
-                    System.out.println("Game started!");
-                } else if (gameY >= TwoPlayersY && gameY <= TwoPlayersY + buttonHeight) {
-                      gameStarted = true;
-                      player2Active = true;
-            }else if (gameY >= instructionButtonY && gameY <= instructionButtonY + buttonHeight) {
-                   
-                  // showInstructions();
-                  inst=true;
-                } else if (gameY >= exitButtonY && gameY <= exitButtonY + buttonHeight) {
-                    System.exit(0);
-                }
+        // Check if mute/unmute button is clicked
+        if (gameX >= 90 && gameX <= 90 + 5 && gameY >= 90 && gameY <= 90 + 5) {
+            // Toggle mute state
+            isMuted = !isMuted;
+            if (isMuted) {
+                // Stop the background music
+                stopBackgroundMusic();
+            } else {
+                // Start the background music
+                startBackgroundMusic();
+            }
+        }
+
+        if (gameX >= buttonsX && gameX <= buttonsX + buttonWidth) {
+            if (gameY >= OnePlayerY && gameY <= OnePlayerY + buttonHeight) {
+                gameStarted = true; 
+                player2Active = false;
+                System.out.println("Game started!");
+            } else if (gameY >= TwoPlayersY && gameY <= TwoPlayersY + buttonHeight) {
+                gameStarted = true;
+                player2Active = true;
+            } else if (gameY >= instructionButtonY && gameY <= instructionButtonY + buttonHeight) {
+                inst = true;
+            } else if (gameY >= exitButtonY && gameY <= exitButtonY + buttonHeight) {
+                System.exit(0);
             }
         }
     }
+}
+
     @Override
     public void mousePressed(MouseEvent e) {}
 
