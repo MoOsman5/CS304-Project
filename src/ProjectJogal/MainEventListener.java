@@ -70,6 +70,14 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
     // Calculate X position to center the buttons
     private int buttonsX = 45;
+    
+    
+    
+    int Basket2X = 70; // Initial position of Player 2's basket
+int Basket2Y = 5;
+int basket2Width = 10;
+boolean player2Active = false;
+
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
@@ -108,82 +116,82 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
         glAutoDrawable.addMouseListener(this);
     }
+@Override
+public void display(GLAutoDrawable glAutoDrawable) {
+    GL gl = glAutoDrawable.getGL();
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+    gl.glLoadIdentity();
+    handleKeyPress();
 
-    @Override
-    public void display(GLAutoDrawable glAutoDrawable) {
-        GL gl = glAutoDrawable.getGL();
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-        gl.glLoadIdentity();
-        handleKeyPress();
-     
-        if (Eggs.isEmpty()) {
-                    addEgg();
-                }
-        if (!gameStarted) {
-            System.out.println("Game has not started: " + gameStarted);
-            DrawStartMenu(gl);
-        } else {
-            DrawBackground(gl);
-               TypeText(gl);
-            if (health > 0) {
-               
-                for (Egg egg : Eggs) {
-                    DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
-                    egg.y--;
-                    
-                    
-                     if (egg.y < 0) {
-//                    Speed-=70;
-                   Remove.add(egg);
-                    health--; 
-                }
-                    
-               
-                  double dist = sqrdDistance(egg.x,egg.y,BasketX,BasketY);
-                  double radii = Math.pow(2*0.03*maxHeight,2);
-                    boolean isCollided = dist<=radii;
-        System.out.println(isCollided + ", "+ dist + ", "+ radii);
-//        
-         if(isCollided==true){
-                   Remove.add(egg);
-                   score++;
-                }
-//              
+    if (Eggs.isEmpty()) {
+        addEgg();
+    }
+
+    if (!gameStarted) {
+        DrawStartMenu(gl);
+    } else {
+        DrawBackground(gl);
+        TypeText(gl);
+        if (health > 0) {
+            for (Egg egg : Eggs) {
+                DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
+                egg.y--;
+
+                if (egg.y < 0) {
+                    Remove.add(egg);
+                    health--;
                 }
 
-                Eggs.removeAll(Remove);
+                double dist = sqrdDistance(egg.x, egg.y, BasketX, BasketY);
+                double radii = Math.pow(2 * 0.03 * maxHeight, 2);
+                boolean isCollided = dist <= radii;
 
-                CountNum++;
-                if (CountNum >= Speed) {
-                    addEgg();
-                    CountNum = 0;
+                if (isCollided) {
+                    Remove.add(egg);
+                    score++;
                 }
 
-                System.out.println("Current Score: " + score);
+                if (player2Active) {
+                    double dist2 = sqrdDistance(egg.x, egg.y, Basket2X, Basket2Y);
+                    boolean isCollided2 = dist2 <= radii;
 
-                DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
-                DrawHealth(gl);
-                
-                 RepeatCounter++;
-                if (RepeatCounter >= 5) {
-                    chickenIndex++;
-                    chickenIndex = chickenIndex % 2;
-                    RepeatCounter = 0;
+                    if (isCollided2) {
+                        Remove.add(egg);
+                        score++;
+                    }
                 }
-
-                for (int i = 0; i < NumberChicken; i++) {
-                    DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
-                }
-
-                DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
-
-                
-            } else {
-                DrawGameOver(gl);
-                stopBackgroundMusic();
             }
+
+            Eggs.removeAll(Remove);
+            CountNum++;
+            if (CountNum >= Speed) {
+                addEgg();
+                CountNum = 0;
+            }
+
+            DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0); // Player 1's basket
+
+            if (player2Active) {
+                DrawSprite(gl, Basket2X, Basket2Y, BasketIndex, 2, 0); // Player 2's basket
+            }
+
+            DrawHealth(gl);
+            RepeatCounter++;
+            if (RepeatCounter >= 5) {
+                chickenIndex++;
+                chickenIndex = chickenIndex % 2;
+                RepeatCounter = 0;
+            }
+
+            for (int i = 0; i < NumberChicken; i++) {
+                DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
+            }
+        } else {
+            DrawGameOver(gl);
+            stopBackgroundMusic();
         }
     }
+}
 
     
      public void TypeText(GL gl) {
@@ -335,13 +343,13 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     }
 
     public void handleKeyPress() {
-        if (isKeyPressed(KeyEvent.VK_LEFT)||isKeyPressed(KeyEvent.VK_4)||isKeyPressed(KeyEvent.VK_A)) {
+        if (isKeyPressed(KeyEvent.VK_LEFT)) {
             BasketX -= 2;
             if (BasketX < 0) {
                 BasketX = 0;
             }
         }
-        if (isKeyPressed(KeyEvent.VK_RIGHT)||isKeyPressed(KeyEvent.VK_6)||isKeyPressed(KeyEvent.VK_D)) {
+        if (isKeyPressed(KeyEvent.VK_RIGHT)) {
             BasketX += 2;
             if (BasketX > maxWidth - basketWidth) {
                 BasketX = maxWidth - basketWidth;
@@ -360,6 +368,8 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                     gameStarted = true;
                 }
                 break;
+                
+                
 //            case KeyEvent.VK_LEFT:
 //                BasketX -= 2;
 //                if (BasketX < 0) {
@@ -372,6 +382,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 //                    BasketX = maxWidth - basketWidth;
 //                }
 //                break;
+                
+                 case KeyEvent.VK_ENTER:
+            player2Active = true; // Activate Player 2
+            break;
+            
             case KeyEvent.VK_R:
                 if (health <= 0) {
                     restartGame();
@@ -381,44 +396,64 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                 if (gameStarted) {
                     backToMenu();
                 }
+                
+                 case KeyEvent.VK_A:
+            if (player2Active) {
+                Basket2X -= 2;
+                if (Basket2X < 0) {
+                    Basket2X = 0;
+                }
+            }
+            break;
+        case KeyEvent.VK_D:
+            if (player2Active) {
+                Basket2X += 2;
+                if (Basket2X > maxWidth - basket2Width) {
+                    Basket2X = maxWidth - basket2Width;
+                }
+            }
+            break;
             default:
                
         }
               keyBits.set(e.getKeyCode());
     }
 
-    private void restartGame() {
-        // Reset game state
-        gameStarted = true;
-        score = 0;
-        health = 3;
-        Speed = 100;
-        BasketX = 50;
-        Eggs.clear();
-        if (gameOverMusic != null) {
-            gameOverMusic.stop();
-            gameOverMusic = null;
-        }
-        if (backgroundMusic != null && !backgroundMusic.isRunning()) {
-            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
-        }
+   private void restartGame() {
+    gameStarted = true;
+    score = 0;
+    health = 3;
+    Speed = 100;
+    BasketX = 50;
+    Basket2X = 70; // Reset Player 2 position
+    player2Active = false; // Deactivate Player 2 on restart
+    Eggs.clear();
+    if (gameOverMusic != null) {
+        gameOverMusic.stop();
+        gameOverMusic = null;
     }
-    private void backToMenu() {
-        // Reset game state
-        gameStarted = false;
-        score = 0;
-        health = 3;
-        Speed = 100;
-        BasketX = 50;
-        Eggs.clear();
-        if (gameOverMusic != null) {
-            gameOverMusic.stop();
-            gameOverMusic = null;
-        }
-        if (backgroundMusic != null && !backgroundMusic.isRunning()) {
-            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
-        }
+    if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
     }
+}
+
+private void backToMenu() {
+    gameStarted = false;
+    score = 0;
+    health = 3;
+    Speed = 100;
+    BasketX = 50;
+    Basket2X = 70; // Reset Player 2 position
+    player2Active = false; // Deactivate Player 2 when returning to menu
+    Eggs.clear();
+    if (gameOverMusic != null) {
+        gameOverMusic.stop();
+        gameOverMusic = null;
+    }
+    if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+}
 
     @Override
     public void keyReleased(final KeyEvent event) {
