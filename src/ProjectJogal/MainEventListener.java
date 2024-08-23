@@ -26,7 +26,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int chickenIndex = 0;
     int startMenuIndex = 10;
     int insIndex = 17;
-     int LEVELIndex = 18;
+    int LEVELIndex = 18;
     int RepeatCounter = 0;
     int gameOverIndex = 8;
     int NumberChicken = 5;
@@ -47,7 +47,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png","instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","Background2.png"};
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png","instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -55,23 +55,25 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     List<Egg> Remove = new ArrayList<>();
     private Clip backgroundMusic;
     private Clip gameOverMusic;
-    private boolean isStartButtonClicked = false;
-    private int startButtonIndex =12;
+    private boolean isOnePlayerClicked = false;
+    private int OnePlayerIndex =12;
+    private int TwoPlayersIndex =19;
     int instructionButtonIndex = 14;  
     int exitButtonIndex = 15; 
     int ScoreIndex = 16;
-    private int startButtonX = 40;
-    private int startButtonWidth = 20;
-    private int startButtonHeight = 10;
+    private int OnePlayerX = 40;
+    private int OnePlayerWidth = 20;
+    private int OnePlayerHeight = 10;
     private int instructionButtonX = 70;
     private int exitButtonX = 10;
     private int buttonWidth = 20;
     private int buttonHeight = 10;
     private int buttonSpacing = 5; 
     private int startMenuCenterX = 50; 
-    private int startButtonY = 60;
-    private int instructionButtonY = 40;
-    private int exitButtonY = 20;
+    private int OnePlayerY = 70;
+    private int TwoPlayersY = 50;
+    private int instructionButtonY = 30;
+    private int exitButtonY = 10;
 
     // Calculate X position to center the buttons
     private int buttonsX = 45;
@@ -242,7 +244,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
         gl.glEnable(GL.GL_BLEND);
        if(inst==false){
         DrawSprite(gl,45 ,45, startMenuIndex, 10, 0);
-        DrawSprite(gl, buttonsX, startButtonY, startButtonIndex, 1.5, 0);
+        DrawSprite(gl, buttonsX, OnePlayerY, OnePlayerIndex, 1.5, 0);
+        DrawSprite(gl, buttonsX, TwoPlayersY, TwoPlayersIndex, 1.5, 0);
         DrawSprite(gl, buttonsX, instructionButtonY, instructionButtonIndex, 2, 0);
         DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 1.4, 0);
     }
@@ -351,10 +354,6 @@ public void display(GLAutoDrawable glAutoDrawable) {
 
         gl.glDisable(GL.GL_BLEND);
     }
-    private void showInstructions() {
-        
-   // DrawSprite(gl, instructionButtonX, instructionButtonY, insIndex, 1.5, 0);
-    }
 
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int width, int height) {
@@ -453,7 +452,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
     Speed = 100;
     BasketX = 50;
     Basket2X = 70; // Reset Player 2 position
-    player2Active = false; // Deactivate Player 2 on restart
+   if(player2Active==true){
+       player2Active=true;
+   }
     Eggs.clear();
     if (gameOverMusic != null) {
         gameOverMusic.stop();
@@ -507,10 +508,14 @@ private void backToMenu() {
             double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
 
             if (gameX >= buttonsX && gameX <= buttonsX + buttonWidth) {
-                if (gameY >= startButtonY && gameY <= startButtonY + buttonHeight) {
-                    gameStarted = true;
+                if (gameY >= OnePlayerY && gameY <= OnePlayerY + buttonHeight) {
+                    gameStarted = true; 
+                    player2Active = false;
                     System.out.println("Game started!");
-                } else if (gameY >= instructionButtonY && gameY <= instructionButtonY + buttonHeight) {
+                } else if (gameY >= TwoPlayersY && gameY <= TwoPlayersY + buttonHeight) {
+                      gameStarted = true;
+                      player2Active = true;
+            }else if (gameY >= instructionButtonY && gameY <= instructionButtonY + buttonHeight) {
                    
                   // showInstructions();
                   inst=true;
