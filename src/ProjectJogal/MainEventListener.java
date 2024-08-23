@@ -335,13 +335,13 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     }
 
     public void handleKeyPress() {
-        if (isKeyPressed(KeyEvent.VK_LEFT)) {
+        if (isKeyPressed(KeyEvent.VK_LEFT)||isKeyPressed(KeyEvent.VK_4)||isKeyPressed(KeyEvent.VK_A)) {
             BasketX -= 2;
             if (BasketX < 0) {
                 BasketX = 0;
             }
         }
-        if (isKeyPressed(KeyEvent.VK_RIGHT)) {
+        if (isKeyPressed(KeyEvent.VK_RIGHT)||isKeyPressed(KeyEvent.VK_6)||isKeyPressed(KeyEvent.VK_D)) {
             BasketX += 2;
             if (BasketX > maxWidth - basketWidth) {
                 BasketX = maxWidth - basketWidth;
