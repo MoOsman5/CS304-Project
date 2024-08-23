@@ -1,6 +1,7 @@
 package ProjectJogal;
 
 import Texture.TextureReader;
+import com.sun.opengl.util.GLUT;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import javax.media.opengl.GL;
+import static javax.media.opengl.GL.GL_CURRENT_BIT;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
@@ -49,8 +51,8 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private Clip gameOverMusic;
     private boolean isStartButtonClicked = false;
     private int startButtonIndex =12;
-    int instructionButtonIndex = 14; // You'll need to add this texture
-    int exitButtonIndex = 15; // You'll need to add this texture
+    int instructionButtonIndex = 14; 
+    int exitButtonIndex = 15; 
     private int startButtonX = 40;
     private int startButtonWidth = 20;
     private int startButtonHeight = 10;
@@ -58,8 +60,8 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private int exitButtonX = 10;
     private int buttonWidth = 20;
     private int buttonHeight = 10;
-    private int buttonSpacing = 5; // Space between buttons
-    private int startMenuCenterX = 50; // Center of the start menu
+    private int buttonSpacing = 5; 
+    private int startMenuCenterX = 50; 
     private int startButtonY = 60;
     private int instructionButtonY = 45;
     private int exitButtonY = 30;
@@ -110,44 +112,41 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
         gl.glLoadIdentity();
-
+        handleKeyPress();
+     
+        if (Eggs.isEmpty()) {
+                    addEgg();
+                }
         if (!gameStarted) {
             System.out.println("Game has not started: " + gameStarted);
             DrawStartMenu(gl);
         } else {
             DrawBackground(gl);
+               TypeText(gl);
             if (health > 0) {
-                handleKeyPress();
-
-                if (Eggs.isEmpty()) {
-                    addEgg();
-                }
-
-                RepeatCounter++;
-                if (RepeatCounter >= 5) {
-                    chickenIndex++;
-                    chickenIndex = chickenIndex % 2;
-                    RepeatCounter = 0;
-                }
-
-                for (int i = 0; i < NumberChicken; i++) {
-                    DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
-                }
-
-                DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
-
+               
                 for (Egg egg : Eggs) {
                     DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
                     egg.y--;
-
-                    if (sqrdDistance(egg.x, egg.y, BasketX, BasketY) < 16) {
-                        Remove.add(egg);
-                        score++;
-                    } else if (egg.y < 0) {
-                        Speed -= 5;
-                        Remove.add(egg);
-                        health--;
-                    }
+                    
+                    
+                     if (egg.y < 0) {
+                    Speed-=70;
+                   Remove.add(egg);
+                    health--; 
+                }
+                    
+               
+                  double dist = sqrdDistance(egg.x,egg.y,BasketX,BasketY);
+                  double radii = Math.pow(2*0.03*maxHeight,2);
+                    boolean isCollided = dist<=radii;
+        System.out.println(isCollided + ", "+ dist + ", "+ radii);
+//        
+         if(isCollided==true){
+                   Remove.add(egg);
+                   score++;
+                }
+//               
                 }
 
                 Eggs.removeAll(Remove);
@@ -162,6 +161,21 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
                 DrawSprite(gl, BasketX, BasketY, BasketIndex, 2, 0);
                 DrawHealth(gl);
+                
+                 RepeatCounter++;
+                if (RepeatCounter >= 5) {
+                    chickenIndex++;
+                    chickenIndex = chickenIndex % 2;
+                    RepeatCounter = 0;
+                }
+
+                for (int i = 0; i < NumberChicken; i++) {
+                    DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
+                }
+
+                DrawTreebranch(gl, 0, 61, 3, 1.0, 0);
+
+                
             } else {
                 DrawGameOver(gl);
                 stopBackgroundMusic();
@@ -169,6 +183,19 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
         }
     }
 
+    
+     public void TypeText(GL gl) {
+        gl.glPushAttrib(GL_CURRENT_BIT);
+        gl.glColor4f(0f, 0f, 0f, 1.0f);
+        GLUT glut = new GLUT();
+        gl.glRasterPos2d(-0.1, 0.9);
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, "Score : " + score);
+        gl.glPopAttrib();
+    }
+    
+    
+    
+    
     public void stopBackgroundMusic() {
         if (backgroundMusic != null && backgroundMusic.isRunning()) {
             backgroundMusic.stop();
@@ -321,24 +348,25 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
     @Override
     public void keyPressed(final KeyEvent e) {
+        
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SPACE:
                 if (!gameStarted) {
                     gameStarted = true;
                 }
                 break;
-            case KeyEvent.VK_LEFT:
-                BasketX -= 2;
-                if (BasketX < 0) {
-                    BasketX = 0;
-                }
-                break;
-            case KeyEvent.VK_RIGHT:
-                BasketX += 2;
-                if (BasketX > maxWidth - basketWidth) {
-                    BasketX = maxWidth - basketWidth;
-                }
-                break;
+//            case KeyEvent.VK_LEFT:
+//                BasketX -= 2;
+//                if (BasketX < 0) {
+//                    BasketX = 0;
+//                }
+//                break;
+//            case KeyEvent.VK_RIGHT:
+//                BasketX += 2;
+//                if (BasketX > maxWidth - basketWidth) {
+//                    BasketX = maxWidth - basketWidth;
+//                }
+//                break;
             case KeyEvent.VK_R:
                 if (health <= 0) {
                     restartGame();
@@ -349,8 +377,9 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                     backToMenu();
                 }
             default:
-                // Handle other key presses
+               
         }
+              keyBits.set(e.getKeyCode());
     }
 
     private void restartGame() {
