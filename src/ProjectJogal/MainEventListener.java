@@ -524,7 +524,7 @@ public void mouseClicked(MouseEvent e) {
         double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
 
         // Check if mute/unmute button is clicked
-        if (gameX >= 90 && gameX <= 90 + 5 && gameY >= 90 && gameY <= 90 + 5) {
+        if (gameX >= 90 && gameX <= 90 + 10 && gameY >= 90 && gameY <= 90 + 10) {
             // Toggle mute state
             isMuted = !isMuted;
             if (isMuted) {
