@@ -149,6 +149,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 if (isCollided) {
                     Remove.add(egg);
                     score++;
+                      if (score%10==0 && Speed > 20) {
+                        Speed -= 20;
+                    }
                 }
 
                 if (player2Active) {
@@ -158,6 +161,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
                     if (isCollided2) {
                         Remove.add(egg);
                         score++;
+                          if (score%10==0 && Speed > 20) {
+                        Speed -= 20;
+                    }
                     }
                 }
             }
