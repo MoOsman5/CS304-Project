@@ -17,7 +17,7 @@ public class Main extends JFrame {
     }
 
     public Main() {
-        setTitle("Chicken Egg");
+        setTitle("Winner Winner Chicken Dinner");
         gLCanvas = new GLCanvas();
         gLCanvas.addGLEventListener(listener);
         gLCanvas.addKeyListener(listener);
