@@ -23,6 +23,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class MainEventListener implements GLEventListener, KeyListener, MouseListener {
     int chickenIndex = 0;
+    int startMenuIndex = 10;
     int RepeatCounter = 0;
     int gameOverIndex = 8;
     int NumberChicken = 5;
@@ -41,7 +42,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int heartIndex = 7;
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png","instructions.png","exit.png","Background2.png"};
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "StartButton.png","Background2.png","instructions.png","exit.png","Score.png","Background2.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -51,8 +52,9 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private Clip gameOverMusic;
     private boolean isStartButtonClicked = false;
     private int startButtonIndex =12;
-    int instructionButtonIndex = 14; 
+    int instructionButtonIndex = 14;  
     int exitButtonIndex = 15; 
+    int ScoreIndex = 16;
     private int startButtonX = 40;
     private int startButtonWidth = 20;
     private int startButtonHeight = 10;
@@ -63,11 +65,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private int buttonSpacing = 5; 
     private int startMenuCenterX = 50; 
     private int startButtonY = 60;
-    private int instructionButtonY = 45;
-    private int exitButtonY = 30;
+    private int instructionButtonY = 40;
+    private int exitButtonY = 20;
 
     // Calculate X position to center the buttons
-    private int buttonsX = startMenuCenterX - (buttonWidth / 2);
+    private int buttonsX = 45;
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
@@ -131,7 +133,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                     
                     
                      if (egg.y < 0) {
-                    Speed-=70;
+//                    Speed-=70;
                    Remove.add(egg);
                     health--; 
                 }
@@ -146,7 +148,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
                    Remove.add(egg);
                    score++;
                 }
-//               
+//              
                 }
 
                 Eggs.removeAll(Remove);
@@ -188,9 +190,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
         gl.glPushAttrib(GL_CURRENT_BIT);
         gl.glColor4f(0f, 0f, 0f, 1.0f);
         GLUT glut = new GLUT();
-        gl.glRasterPos2d(-0.1, 0.9);
-        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, "Score : " + score);
+        gl.glRasterPos2d(.13, 0.93);
+        
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24,"" + score);
         gl.glPopAttrib();
+         DrawSprite(gl, 45, 91, ScoreIndex,2 , 0);
     }
     
     
@@ -204,22 +208,23 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
     public void DrawStartMenu(GL gl) {
         gl.glEnable(GL.GL_BLEND);
-        int startMenuIndex = 10;
-        DrawSprite(gl, 30, 47, startMenuIndex, 13, 0);
-        DrawSprite(gl, buttonsX, startButtonY, startButtonIndex, 2, 0);
+       
+        DrawSprite(gl,45 ,45, startMenuIndex, 10, 0);
+        DrawSprite(gl, buttonsX, startButtonY, startButtonIndex, 1.5, 0);
         DrawSprite(gl, buttonsX, instructionButtonY, instructionButtonIndex, 2, 0);
-        DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 2, 0);
+        DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 1.4, 0);
+ 
         gl.glDisable(GL.GL_BLEND);
     }
 
     public void DrawHealth(GL gl) {
         for (int i = 0; i < health; i++) {
-            DrawSprite(gl, 5 + i * 10, 90, heartIndex, 1, 0);
+            DrawSprite(gl,  i * 5, 90, heartIndex, 1, 0);
         }
     }
 
     public void DrawGameOver(GL gl) {
-        DrawSprite(gl, 40, 50, gameOverIndex, 8, 0);
+        DrawSprite(gl, 45, 60, gameOverIndex, 8, 0);
 
         stopBackgroundMusic();
         if (gameOverMusic == null) {
