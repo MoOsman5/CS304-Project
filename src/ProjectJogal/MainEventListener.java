@@ -92,7 +92,7 @@ int Basket2Y = 5;
 int basket2Width = 10;
 boolean player2Active = false;
 boolean inst=false;
-
+boolean isMuted = false;
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         this.gl = glAutoDrawable.getGL();
@@ -146,6 +146,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
 
     if (!gameStarted) {
         DrawStartMenu(gl);
+        
     } else {
         DrawBackground(gl);
         TypeText(gl,score,0.13,0.93);
@@ -188,7 +189,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
                         Remove.add(egg);
                         score++;
                           if (score%10==0) {
-                    Speed -= 20;
+                    Speed -= 5;
+                     Level+=1;
                           }
                     }
                     
@@ -521,7 +523,7 @@ private void backToMenu() {
     public boolean isKeyPressed(final int keyCode) {
         return keyBits.get(keyCode);
     }
-private boolean isMuted = false;
+
 
     @Override
 public void mouseClicked(MouseEvent e) {
