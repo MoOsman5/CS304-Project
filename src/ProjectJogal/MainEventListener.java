@@ -176,8 +176,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
                     Remove.add(egg);
                     score++;
                      if (score%10==0 ) {
-                    Speed -= 10;
-                    Speed=20;
+                        Speed -= 5;
                     Level+=1;
                 }
                 }
@@ -191,10 +190,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
                         score++;
                           if (score%10==0) {
 
-                
-                    Speed=20;
-
-                    Speed -= 10;
+                      Speed -= 5;
+                    Level+=1;
                 
                           }
                     }
