@@ -501,6 +501,7 @@ private void backToMenu() {
     BasketX = 50;
     Basket2X = 70; // Reset Player 2 position
     player2Active = false;// Deactivate Player 2 when returning to menu
+    
     Eggs.clear();
     if (gameOverMusic != null) {
         gameOverMusic.stop();
