@@ -153,12 +153,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
         DrawBackground(gl);
         TypeText(gl,score,0.13,0.93);
         TypeText(gl,Level,0.59,0.92);
-          if (isMuted) {
-            DrawSprite(gl, soundX, soundY, muteIndex, 0.5, 0);
-            
-        } else {
-            DrawSprite(gl, soundX, soundY, unmuteIndex, 0.5, 0);
-        }
+        
         
         if (health > 0) {
             for (Egg egg : Eggs) {
@@ -309,7 +304,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
 public void startBackgroundMusic() {
     if (backgroundMusic != null && !backgroundMusic.isRunning()) {
         backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+        
     }
+    
 }
 
     public void DrawHealth(GL gl) {
@@ -477,7 +474,19 @@ public void startBackgroundMusic() {
             case KeyEvent.VK_ESCAPE:
                 if (gameStarted) {
                     backToMenu();
+                    if(isMuted){
+                            stopBackgroundMusic();
+
+                    }
+                    else{
+                            startBackgroundMusic();
                     
+                    }
+                     
+            DrawSprite(gl, soundX, soundY, muteIndex, 0.5, 0);
+        } else {
+            DrawSprite(gl, soundX, soundY, unmuteIndex, 0.5, 0);
+        
                 }
                 if(inst==true){
                     inst=false;
@@ -531,8 +540,8 @@ private void backToMenu() {
     health = 3;
     Speed = 100;
     BasketX = 50;
-    Basket2X = 70; // Reset Player 2 position
-    player2Active = false;// Deactivate Player 2 when returning to menu
+    Basket2X = 70; 
+    player2Active = false;
     
     Eggs.clear();
     if (gameOverMusic != null) {
@@ -569,15 +578,11 @@ public void mouseClicked(MouseEvent e) {
         double gameX = (mouseX / (double) e.getComponent().getWidth()) * maxWidth;
         double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
 
-        // Check if mute/unmute button is clicked
         if (gameX >= soundX && gameX <= soundX + 10 && gameY >= soundY && gameY <= soundY + 10) {
-            // Toggle mute state
             isMuted = !isMuted;
             if (isMuted) {
-                // Stop the background music
                 stopBackgroundMusic();
             } else {
-                // Start the background music
                 startBackgroundMusic();
             }
         }
