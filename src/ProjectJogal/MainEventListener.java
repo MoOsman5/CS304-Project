@@ -32,6 +32,8 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int NumberChicken = 5;
     int maxWidth = 100;
     int maxHeight = 100;
+    int soundX=90;
+    int soundY=90;
     int[] x = {5, 25, 45, 65, 85};
     int[] y = {70, 70, 70, 70, 70};
     boolean gameStarted = false;
@@ -132,6 +134,7 @@ boolean inst=false;
     }
 @Override
 public void display(GLAutoDrawable glAutoDrawable) {
+    
     GL gl = glAutoDrawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     gl.glLoadIdentity();
@@ -147,6 +150,12 @@ public void display(GLAutoDrawable glAutoDrawable) {
         DrawBackground(gl);
         TypeText(gl,score,0.13,0.93);
         TypeText(gl,Level,0.59,0.92);
+          if (isMuted) {
+            DrawSprite(gl, soundX, soundY, muteIndex, 0.5, 0);
+            
+        } else {
+            DrawSprite(gl, soundX, soundY, unmuteIndex, 0.5, 0);
+        }
         
         if (health > 0) {
             for (Egg egg : Eggs) {
@@ -255,9 +264,9 @@ public void display(GLAutoDrawable glAutoDrawable) {
 
         // Display either mute.png or unmute.png
         if (isMuted) {
-            DrawSprite(gl, 90, 90, muteIndex, 0.5, 0);
+            DrawSprite(gl, soundX, soundY, muteIndex, 0.5, 0);
         } else {
-            DrawSprite(gl, 90, 90, unmuteIndex, 0.5, 0);
+            DrawSprite(gl, soundX, soundY, unmuteIndex, 0.5, 0);
         }
     }
     gl.glDisable(GL.GL_BLEND);
@@ -524,7 +533,7 @@ public void mouseClicked(MouseEvent e) {
         double gameY = maxHeight - (mouseY / (double) e.getComponent().getHeight()) * maxHeight;
 
         // Check if mute/unmute button is clicked
-        if (gameX >= 90 && gameX <= 90 + 10 && gameY >= 90 && gameY <= 90 + 10) {
+        if (gameX >= soundX && gameX <= soundX + 10 && gameY >= soundY && gameY <= soundY + 10) {
             // Toggle mute state
             isMuted = !isMuted;
             if (isMuted) {
