@@ -213,12 +213,21 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 
                           }
                     }
-                      if(egg.index==7&&isCollided){
+                     if(egg.index==7&&isCollided2){
                    Remove.add(egg);
                     score=score+1;
                 
                 }
+                  if(egg.index==8&&isCollided2){
+                   Remove.add(egg);
+                    score=score-2;
                     
+                
+                }
+                   if (egg.y < 0&&egg.index==8) {
+                    Remove.add(egg);
+                    health=health;
+                }
                 }
             }
 
@@ -289,7 +298,6 @@ public void display(GLAutoDrawable glAutoDrawable) {
         DrawSprite(gl, buttonsX, instructionButtonY, instructionButtonIndex, 2, 0);
         DrawSprite(gl, buttonsX, exitButtonY, exitButtonIndex, 1.4, 0);
 
-        // Display either mute.png or unmute.png
         if (isMuted) {
             DrawSprite(gl, soundX, soundY, muteIndex, 0.5, 0);
         } else {
@@ -469,6 +477,7 @@ public void startBackgroundMusic() {
             case KeyEvent.VK_ESCAPE:
                 if (gameStarted) {
                     backToMenu();
+                    
                 }
                 if(inst==true){
                     inst=false;
