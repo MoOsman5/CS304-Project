@@ -24,11 +24,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class MainEventListener implements GLEventListener, KeyListener, MouseListener {
     private GL gl;
     int chickenIndex = 0;
-    int startMenuIndex = 10;
-    int insIndex = 17;
-    int LEVELIndex = 18;
+    int startMenuIndex = 12;
+    int insIndex = 19;
+    int LEVELIndex = 20;
     int RepeatCounter = 0;
-    int gameOverIndex = 8;
+    int gameOverIndex = 10;
     int NumberChicken = 5;
     int maxWidth = 100;
     int maxHeight = 100;
@@ -45,11 +45,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int BasketY = 5;
     int basketWidth = 10;
     int health = 3;
-    int heartIndex = 7;
+    int heartIndex = 9;
     
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", 
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "IncEgg.png", "DecEgg.png", 
         "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png",
         "instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png","mute.png","unmute.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
@@ -60,13 +60,15 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private Clip backgroundMusic;
     private Clip gameOverMusic;
     private boolean isOnePlayerClicked = false;
-    private int OnePlayerIndex =12;
-    private int TwoPlayersIndex =19;
-    int instructionButtonIndex = 14;  
-    int exitButtonIndex = 15; 
-    int ScoreIndex = 16;
-    int muteIndex=21;
-    int unmuteIndex=22;
+    private int OnePlayerIndex =14;
+    private int TwoPlayersIndex =21;
+    int instructionButtonIndex = 16;  
+    int exitButtonIndex = 17; 
+    int ScoreIndex = 18;
+    int muteIndex=23;
+    int unmuteIndex=24;
+    int incEggIndex=7;
+    int decEggIndex=8;
     
     private int OnePlayerX = 40;
     private int OnePlayerWidth = 20;
@@ -180,6 +182,22 @@ public void display(GLAutoDrawable glAutoDrawable) {
                     Level+=1;
                 }
                 }
+                if(egg.index==7&&isCollided){
+                   Remove.add(egg);
+                    score=score+1;
+                
+                }
+                  if(egg.index==8&&isCollided){
+                   Remove.add(egg);
+                    score=score-2;
+                    
+                
+                }
+                   if (egg.y < 0&&egg.index==8) {
+                    Remove.add(egg);
+                    health++;
+                }
+                
                
                 if (player2Active) {
                     double dist2 = sqrdDistance(egg.x, egg.y, Basket2X, Basket2Y);
@@ -195,6 +213,11 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 
                           }
                     }
+                      if(egg.index==7&&isCollided){
+                   Remove.add(egg);
+                    score=score+1;
+                
+                }
                     
                 }
             }
@@ -311,7 +334,7 @@ public void startBackgroundMusic() {
         int characterIndex = (int) (Math.random() * NumberChicken);
         int EggX = x[characterIndex];
         int EggY = y[characterIndex];
-        int index = (int) (Math.random() * 3) + 4;
+        int index = (int) (Math.random() * 5) + 4;
         Eggs.add(new Egg(EggX, EggY, index));
     }
 
