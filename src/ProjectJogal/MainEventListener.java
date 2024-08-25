@@ -50,7 +50,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
 
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "IncEgg.png", "DecEgg.png",
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png","DecEgg.png", "IncEgg.png",  
         "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png",
         "instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png","mute.png","unmute.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
@@ -141,6 +141,25 @@ boolean isMuted = false;
         gl.glLoadIdentity();
 
 
+    if (!gameStarted) {
+        DrawStartMenu(gl);
+        
+    } else {
+        DrawBackground(gl);
+        TypeText(gl,score,0.13,0.93);
+        TypeText(gl,Level,0.59,0.92);
+        
+        
+        if (health > 0) {
+            for (Egg egg : Eggs) {
+                DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
+                egg.y--;
+            if(egg.index!=7){
+                if (egg.y < 0) {
+                    Remove.add(egg);
+                    health--;
+                }
+            }
 
         handleKeyPress();
 
@@ -151,9 +170,7 @@ boolean isMuted = false;
         if (!gameStarted) {
             DrawStartMenu(gl);
         } else {
-            // Skip updating the game state if the game is paused
             if (paused) {
-                // Optionally, draw a "Paused" message on the screen
                 TypeText2(gl, "Paused", 0, 0);
                 return;
             }
@@ -223,6 +240,21 @@ boolean isMuted = false;
                     }
                 }
 
+                     if(egg.index==8&&isCollided2){
+                   Remove.add(egg);
+                    score=score+1;
+                
+                }
+                  if(egg.index==7&&isCollided2){
+                   Remove.add(egg);
+                    score=score-2;
+                    
+                
+                }
+         
+                }
+            }
+
                 Eggs.removeAll(Remove);
                 CountNum++;
                 if (CountNum >= Speed) {
@@ -255,6 +287,11 @@ boolean isMuted = false;
         }
         if (inst == true) {
             DrawSprite(gl, 45, 45, insIndex, 10, 0);
+            
+            DrawTreebranch(gl, 0, 62,3 , 1, 0);
+        } else {
+            DrawGameOver(gl);
+            stopBackgroundMusic();
         }
     }
 
