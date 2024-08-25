@@ -561,9 +561,9 @@ private void backToMenu() {
         gameOverMusic.stop();
         gameOverMusic = null;
     }
-    if (backgroundMusic != null && !backgroundMusic.isRunning()) {
-        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
-    }
+//    if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+//        backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+//    }
 }
 
     @Override
