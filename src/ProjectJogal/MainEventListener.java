@@ -166,7 +166,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 Egg egg = Eggs.get(i);
                 DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
                 egg.y--;
-            if(egg.index!=7){
+            if(egg.index!=7&&egg.index!=8){
                 if (egg.y < 0) {
                     Remove.add(egg);
                     health--;
@@ -521,9 +521,10 @@ public void startBackgroundMusic() {
     gameStarted = true;
     score = 0;
     health = 3;
-    Speed = 100;
+    Speed = 50;
     BasketX = 50;
     Basket2X = 70; // Reset Player 2 position
+    Level=1;
    if(player2Active==true){
        player2Active=true;
    }
@@ -541,9 +542,10 @@ private void backToMenu() {
     gameStarted = false;
     score = 0;
     health = 3;
-    Speed = 100;
+    Speed = 50;
     BasketX = 50;
     Basket2X = 70; 
+    Level=1;
     player2Active = false;
     
     Eggs.clear();
