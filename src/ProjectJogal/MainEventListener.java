@@ -46,7 +46,8 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int basketWidth = 10;
     int health = 3;
     int heartIndex = 9;
-    
+    private boolean paused = false;
+
 
     String assetsFolderName = "Assets";
     String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png","DecEgg.png", "IncEgg.png",  
@@ -137,7 +138,7 @@ boolean isMuted = false;
     }
 @Override
 public void display(GLAutoDrawable glAutoDrawable) {
-    
+
     GL gl = glAutoDrawable.getGL();
     gl.glClear(GL.GL_COLOR_BUFFER_BIT);
     gl.glLoadIdentity();
@@ -149,13 +150,17 @@ public void display(GLAutoDrawable glAutoDrawable) {
 
     if (!gameStarted) {
         DrawStartMenu(gl);
-        
+
     } else {
+        if (paused) {
+            TypeText2(gl, "Paused", 0, 0);
+            return;
+        }
         DrawBackground(gl);
         TypeText(gl,score,0.13,0.93);
         TypeText(gl,Level,0.59,0.92);
-        
-        
+
+
         if (health > 0) {
            for (int i = 0; i < Eggs.size(); i++) {
                 Egg egg = Eggs.get(i);
@@ -183,16 +188,16 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 if(egg.index==8&&isCollided){
                    Remove.add(egg);
                     score=score+1;
-                
+
                 }
                   if(egg.index==7&&isCollided){
                    Remove.add(egg);
                     score=score-2;
-                    
-                
+
+
                 }
-                
-               
+
+
                 if (player2Active) {
                     double dist2 = sqrdDistance(egg.x, egg.y, Basket2X, Basket2Y);
                     boolean isCollided2 = dist2 <= radii;
@@ -204,21 +209,21 @@ public void display(GLAutoDrawable glAutoDrawable) {
 
                       Speed -= 5;
                     Level+=1;
-                
+
                           }
                     }
                      if(egg.index==8&&isCollided2){
                    Remove.add(egg);
                     score=score+1;
-                
+
                 }
                   if(egg.index==7&&isCollided2){
                    Remove.add(egg);
                     score=score-2;
-                    
-                
+
+
                 }
-         
+
                 }
             }
 
@@ -247,7 +252,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
             for (int i = 0; i < NumberChicken; i++) {
                 DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
             }
-            
+
             DrawTreebranch(gl, 0, 62,3 , 1, 0);
         } else {
             DrawGameOver(gl);
@@ -256,7 +261,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
     }
     if(inst==true){
         DrawSprite(gl, 45, 45, insIndex, 10, 0);
-        
+
     }
 }
 
@@ -272,9 +277,20 @@ public void display(GLAutoDrawable glAutoDrawable) {
          DrawSprite(gl, 45, 91, ScoreIndex,2 , 0);
          DrawSprite(gl, 70, 92, LEVELIndex,2 , 0);
     }
-    
-    
-    
+    public void TypeText2(GL gl,String Text,double x, double y) {
+        gl.glPushAttrib(GL_CURRENT_BIT);
+        gl.glColor4f(0f, 0f, 0f, 1.0f);
+        GLUT glut = new GLUT();
+        gl.glRasterPos2d(x, y);
+
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24,"" + Text);
+        gl.glPopAttrib();
+        DrawSprite(gl, 45, 91, ScoreIndex,2 , 0);
+        DrawSprite(gl, 70, 92, LEVELIndex,2 , 0);
+    }
+
+
+
     
     public void stopBackgroundMusic() {
         if (backgroundMusic != null && backgroundMusic.isRunning()) {
@@ -445,24 +461,13 @@ public void startBackgroundMusic() {
                     gameStarted = true;
                 }
                 break;
-                
-                
-//            case KeyEvent.VK_LEFT:
-//                BasketX -= 2;
-//                if (BasketX < 0) {
-//                    BasketX = 0;
-//                }
-//                break;
-//            case KeyEvent.VK_RIGHT:
-//                BasketX += 2;
-//                if (BasketX > maxWidth - basketWidth) {
-//                    BasketX = maxWidth - basketWidth;
-//                }
-//                break;
-                
-                 case KeyEvent.VK_ENTER:
-            player2Active = true; // Activate Player 2
-            break;
+
+            case KeyEvent.VK_P:
+                paused = !paused;
+                break;
+            case KeyEvent.VK_ENTER:
+                player2Active = true; // Activate Player 2
+                break;
             
             case KeyEvent.VK_R:
                 if (health <= 0) {
