@@ -86,12 +86,11 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     private int instructionButtonY = 30;
     private int exitButtonY = 10;
 
-    // Calculate X position to center the buttons
     private int buttonsX = 45;
     
     
     
-    int Basket2X = 70; // Initial position of Player 2's basket
+    int Basket2X = 70; 
 int Basket2Y = 5;
 int basket2Width = 10;
 boolean player2Active = false;
@@ -193,6 +192,7 @@ public void display(GLAutoDrawable glAutoDrawable) {
                   if(egg.index==7&&isCollided){
                    Remove.add(egg);
                     score=score-2;
+                    
 
 
                 }
@@ -531,7 +531,7 @@ public void startBackgroundMusic() {
     health = 3;
     Speed = 50;
     BasketX = 50;
-    Basket2X = 70; // Reset Player 2 position
+    Basket2X = 70; 
     Level=1;
    if(player2Active==true){
        player2Active=true;
