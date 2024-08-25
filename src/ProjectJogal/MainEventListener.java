@@ -49,7 +49,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     
 
     String assetsFolderName = "Assets";
-    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png", "IncEgg.png", "DecEgg.png", 
+    String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png","DecEgg.png", "IncEgg.png",  
         "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png",
         "instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png","mute.png","unmute.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
@@ -159,11 +159,12 @@ public void display(GLAutoDrawable glAutoDrawable) {
             for (Egg egg : Eggs) {
                 DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
                 egg.y--;
-
+            if(egg.index!=7){
                 if (egg.y < 0) {
                     Remove.add(egg);
                     health--;
                 }
+            }
 
                 double dist = sqrdDistance(egg.x, egg.y, BasketX, BasketY);
                 double radii = Math.pow(2 * 0.03 * maxHeight, 2);
@@ -177,20 +178,16 @@ public void display(GLAutoDrawable glAutoDrawable) {
                     Level+=1;
                 }
                 }
-                if(egg.index==7&&isCollided){
+                if(egg.index==8&&isCollided){
                    Remove.add(egg);
                     score=score+1;
                 
                 }
-                  if(egg.index==8&&isCollided){
+                  if(egg.index==7&&isCollided){
                    Remove.add(egg);
                     score=score-2;
                     
                 
-                }
-                   if (egg.y < 0&&egg.index==8) {
-                    Remove.add(egg);
-                    health++;
                 }
                 
                
@@ -208,21 +205,18 @@ public void display(GLAutoDrawable glAutoDrawable) {
                 
                           }
                     }
-                     if(egg.index==7&&isCollided2){
+                     if(egg.index==8&&isCollided2){
                    Remove.add(egg);
                     score=score+1;
                 
                 }
-                  if(egg.index==8&&isCollided2){
+                  if(egg.index==7&&isCollided2){
                    Remove.add(egg);
                     score=score-2;
                     
                 
                 }
-                   if (egg.y < 0&&egg.index==8) {
-                    Remove.add(egg);
-                    health=health;
-                }
+         
                 }
             }
 
@@ -251,6 +245,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
             for (int i = 0; i < NumberChicken; i++) {
                 DrawSprite(gl, x[i], y[i], chickenIndex, 2, 0);
             }
+            
+            DrawTreebranch(gl, 0, 62,3 , 1, 0);
         } else {
             DrawGameOver(gl);
             stopBackgroundMusic();
