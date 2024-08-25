@@ -464,6 +464,14 @@ public void startBackgroundMusic() {
 
             case KeyEvent.VK_P:
                 paused = !paused;
+                if(paused){
+                stopBackgroundMusic();
+                }else{
+                    if(isMuted==false){
+                    startBackgroundMusic();
+                    }
+                }
+                    
                 break;
             case KeyEvent.VK_ENTER:
                 player2Active = true; // Activate Player 2
