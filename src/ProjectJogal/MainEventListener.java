@@ -52,7 +52,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     String assetsFolderName = "Assets";
     String textureNames[] = {"Chicken1.png", "Chicken2.png", "Basket.png", "Treebranch.png", "Egg1.png", "Egg2.png", "Egg3.png","DecEgg.png", "IncEgg.png",  
         "Health.png","gameover.png", "Background2.png","Intro.png","Background1.png", "OnePlayer.png","Background2.png",
-        "instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","Background2.png","mute.png","unmute.png"};
+        "instructions.png","exit.png","Score.png","Howtoplay.png","LEVEL.png","TwoPlayers.png","images.png","Background2.png","mute.png","unmute.png"};
     TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
     int textures[] = new int[textureNames.length];
     int BasketIndex = 2;
@@ -67,8 +67,8 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int instructionButtonIndex = 16;  
     int exitButtonIndex = 17; 
     int ScoreIndex = 18;
-    int muteIndex=23;
-    int unmuteIndex=24;
+    int muteIndex=24;
+    int unmuteIndex=25;
     int incEggIndex=7;
     int decEggIndex=8;
     
@@ -286,7 +286,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
         glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24,"" + Text);
         gl.glPopAttrib();
         DrawSprite(gl, 45, 91, ScoreIndex,2 , 0);
-        DrawSprite(gl, 70, 92, LEVELIndex,2 , 0);
+        DrawSprite(gl, 70, 92, LEVELIndex,2 , 0); 
+        DrawSprite(gl, 45, 45, 22,5 , 0);
     }
 
 
@@ -473,9 +474,9 @@ public void startBackgroundMusic() {
                 }
                     
                 break;
-            case KeyEvent.VK_ENTER:
-                player2Active = true; // Activate Player 2
-                break;
+//            case KeyEvent.VK_ENTER:
+//                player2Active = true; // Activate Player 2
+//                break;
             
             case KeyEvent.VK_R:
                 if (health <= 0) {
