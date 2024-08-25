@@ -57,6 +57,7 @@ public class MainEventListener implements GLEventListener, KeyListener, MouseLis
     int BasketIndex = 2;
     private List<Egg> Eggs = new ArrayList<>();
     List<Egg> Remove = new ArrayList<>();
+    
     private Clip backgroundMusic;
     private Clip gameOverMusic;
     private boolean isOnePlayerClicked = false;
@@ -156,7 +157,8 @@ public void display(GLAutoDrawable glAutoDrawable) {
         
         
         if (health > 0) {
-            for (Egg egg : Eggs) {
+           for (int i = 0; i < Eggs.size(); i++) {
+                Egg egg = Eggs.get(i);
                 DrawSprite(gl, egg.x, egg.y, egg.index, 3, 0);
                 egg.y--;
             if(egg.index!=7){
